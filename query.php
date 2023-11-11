@@ -83,6 +83,7 @@ if (isset($_POST['btnAdd'])) {
                                 echo '<p class="card-title">' . $row['title'] . '</p>';
                                 echo '<p class="card-text">Description: ' . $row['description'] . '</p>';
                                 echo '<p class="card-text">' . getStatusLabel($row['status']) . '</p>';
+                                echo '<p class="card-title">Reply : ' . $row['reply'] . '</p>';
                                 echo '<p class="card-text">' . $row['datetime'] . '</p>';
                                 //  echo '<p class="card-text text-danger">Issue Fix In:' . date('Y-m-d H:i:s', strtotime($row['datetime'] . ' +2 hours')) . '</p>';
                                 
