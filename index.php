@@ -30,8 +30,15 @@ $db->sql("SET NAMES 'utf8'");
 <body>
 <div class="container mt-5">
         <div class="btn-container">
+            <div class="row">
             <a href="https://wa.me/+917339276625" class="btn btn-success">I want to Join or Refer Friend</a>
+
+            </div>
+            <div class="row">
             <a href="query.php" class="btn btn-primary">I have Queries to ask</a>
+            </div>
+            
+            
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
