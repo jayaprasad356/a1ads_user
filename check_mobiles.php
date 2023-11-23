@@ -8,35 +8,31 @@ $db->sql("SET NAMES 'utf8'");
 if (isset($_GET['mobile'])) {
     $mobile = $db->escapeString($_GET['mobile']);
 
-    $sql_query = "SELECT COUNT(*) as count FROM users WHERE mobile = '$mobile'";
+    $sql_query = "SELECT COUNT(*) as count, status FROM users WHERE mobile = '$mobile'";
     $db->sql($sql_query);
     $result = $db->getResult();
 
     if ($result[0]['count'] > 0) {
         $_SESSION['mobile'] = $mobile;
 
-      
-    $sql_query = "SELECT id, status FROM users WHERE mobile = '$mobile'";
-    $db->sql($sql_query);
-    $userData = $db->getResult();
+        $sql_query = "SELECT id FROM users WHERE mobile = '$mobile'";
+        $db->sql($sql_query);
+        $userData = $db->getResult();
 
         if (!empty($userData)) {
             $_SESSION['user_id'] = $userData[0]['id'];
         }
 
-        if ($userData[0]['status'] == 0) {
-            // Status is 0, send a response indicating this
-            $status = 0;
-            echo json_encode(array('status' => $status, 'message' => 'User status is 0. Open dialog box.'));
-        } else {
-            // Status is not 0, you can handle this case as needed
-            $status = 1;
-            echo json_encode(array('status' => $status, 'message' => 'User verified successfully, you can start work .'));
+        $response = array('registered' => true, 'verified' => $result[0]['status']);
+
+        if ($result[0]['status'] == 0) {
+            $update_query = "UPDATE users SET payment_verified = 'request' WHERE mobile = '$mobile'";
+            $db->sql($update_query);
         }
+
+        echo json_encode($response);
     } else {
-        // User not found
-        $status = -1;
-        echo json_encode(array('status' => $status, 'message' => 'User not found.'));
+        echo json_encode(array('registered' => false));
     }
 }
 ?>

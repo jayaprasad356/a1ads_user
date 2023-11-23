@@ -1,56 +1,22 @@
 <?php
-session_start(); // Start the session
+session_start();
 include_once('includes/crud.php');
 $db = new Database();
 $db->connect();
 $db->sql("SET NAMES 'utf8'");
 
-include_once('includes/custom-functions.php');
-include_once('includes/functions.php');
-$res = [];
-$user_id = NULL;
+if (isset($_POST['btnAdd'])) {
+    $order_id = $db->escapeString($_POST['order_id']);
 
-if (isset($_GET['mobile'])) {
-    $mobile = $db->escapeString($_GET['mobile']);
+    if (isset($_SESSION['mobile'])) {
+        $mobile = $_SESSION['mobile'];
 
-    $sql_query = "SELECT id FROM users WHERE mobile = '$mobile'";
-    $db->sql($sql_query);
-    $userData = $db->getResult();
-
-}
-?>
-          <?php
-                $refer_name = '';
-                $refer_mobile = '';
-if (isset($_POST['btncheck'])) {
-    $friend_refer_code = isset($_POST['friend_refer_code']) ? $db->escapeString($_POST['friend_refer_code']) : '';
-
-    if (!empty($friend_refer_code)) {
-        $sql_query = "SELECT name, mobile FROM users WHERE refer_code = '$friend_refer_code'";
-        $db->sql($sql_query);
-
-        $result = $db->getResult();
-
-        if (!empty($result)) {
-            $refer_name = isset($result[0]['name']) ? $result[0]['name'] : '';
-            $refer_mobile = isset($result[0]['mobile']) ? $result[0]['mobile'] : '';
-        }
+        $update_query = "UPDATE users SET order_id = '$order_id' WHERE mobile = '$mobile'";
+        $db->sql($update_query);
     }
 }
-    if (isset($_POST['btnAdd'])) {
-        $mobile = isset($_POST['mobile']) ? $db->escapeString($_POST['mobile']) : '';
-        $friend_refer_code = isset($_POST['friend_refer_code']) ? $db->escapeString($_POST['friend_refer_code']) : '';
-        $order_id = isset($_POST['order_id']) ? $db->escapeString($_POST['order_id']) : '';
-    
-        $sql_query = "UPDATE users SET order_id = '$order_id', payment_verified	 = 'request' WHERE mobile = '$mobile'";
-        $db->sql($sql_query);
-
-            header("Location: activate.php");
-            exit();
-        } 
 
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -64,11 +30,11 @@ if (isset($_POST['btncheck'])) {
                 <form class="form-inline" method="GET">
                 <div class="form-group mb-3">
                         <label for="mobileNumber" class="form-label">Enter New Mobile Number</label>
-                        <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter new join mobile number" required>
+                        <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter your mobile number" required>
                         <!-- Custom validation message -->
                         <div class="invalid-feedback" id="mobileValidationMessage">Mobile number is required.</div>
                     </div>
-                    <button type="button" class="btn btn-success" id="addQueryButton">View Status</button>
+                    <button type="button" class="btn btn-success" id="addQueryButton">New Joining</button>
                 </form>
     </div>
     <div class="modal fade" id="addQueryModal" tabindex="-1" role="dialog" aria-labelledby="addQueryModalLabel" aria-hidden="true">
@@ -84,31 +50,17 @@ if (isset($_POST['btncheck'])) {
     <div class="card">
         <div class="card-body">
             <form name="add_query_form" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-    <label for="newJoinerMobile">New Joiner Mobile number:</label>
-    <input type="tel" class="form-control" id="newJoinerMobile" name="mobile" required disabled>
-</div>
-
+                <div class="form-group">
+                    <label for="mobile">New Joiner Mobile number:</label>
+                    <input type="tel" class="form-control" id="newJoinerMobile" name="mobile" required disabled>
+                </div>
 
                 <div class="form-group">
                     <label for="friend_refer_code">Friend Refer Code:</label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="friend_refer_code" name="friend_refer_code" required>
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-danger" name="btncheck">Check</button>
                         </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="order_id">Friend Mobile:</label>
-                    <input type="text" class="form-control" name="refer_mobile" value="<?php echo $refer_mobile; ?>" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="order_id">Friend Name:</label>
-                    <input type="text" class="form-control" name="refer_name" value="<?php echo $refer_name; ?>" readonly>
-                </div>
-
+                        </div>
                 <div class="form-group">
                     <label for="order_id">Order ID:</label>
                     <input type="text" class="form-control" id="order_id" name="order_id" required>
@@ -127,58 +79,29 @@ if (isset($_POST['btncheck'])) {
 <script>
 
 $(document).ready(function () {
+    // Function to open the "Add Query" modal
     function openAddQueryModal() {
         $('#addQueryModal').modal('show');
     }
 
     $('#addQueryButton').click(function () {
+        // Check if the Mobile Number field is not empty
         var mobileNumber = $('#mobile').val();
         if (mobileNumber !== '') {
+            // Check if the mobile number is registered
             $.ajax({
                 url: 'check_mobiles.php?mobile=' + mobileNumber,
                 type: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                    // User is not approved, update the value in the second form
-                    $('#newJoinerMobile').val(mobileNumber);
-                            $('#newJoinerMobile').prop('disabled', true);
-                    if (data.status === 0) {
-                        // User status is 0, open dialog box
-                        openAddQueryModal();
-                    } else if (data.status === 1) {
-                        // User status is not 0, handle this case if needed
-                        alert(data.message);
-                    } else {
-                        // Mobile number is not registered, display an error message
-                        alert('This number is not registered ,Please register in app .');
-                    }
-                },
-                error: function () {
-                    alert('Error checking mobile number.');
-                }
-            });
-        } else {
-            $('#mobileValidationMessage').show();
-        }
-    });
-
-
-
-    // Function to handle the "View" button click
-    $('#viewButton').click(function () {
-        var mobileNumber = $('#mobile').val();
-        if (mobileNumber !== '') {
-            $('#mobileValidationMessage').hide();
-
-            // Check if the mobile number is registered
-            $.ajax({
-                url: 'check_mobile.php?mobile=' + mobileNumber,
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
                     if (data.registered) {
-                        // Mobile number is registered, open the "Add Query" modal
-                        openAddQueryModal();
+                        if (data.verified === '1') {
+                            alert('User verified successfully, you can start work .');
+                        } else {
+                            $('#newJoinerMobile').val(mobileNumber);
+                            $('#newJoinerMobile').prop('disabled', true);
+                            openAddQueryModal();
+                        }
                     } else {
                         // Mobile number is not registered, display an error message
                         alert('This number is not registered ,Please register in app .');
@@ -210,9 +133,10 @@ $(document).ready(function () {
     $('#mobile').on('input', function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
+
    
-    
 });
+
 
 
 </script>
