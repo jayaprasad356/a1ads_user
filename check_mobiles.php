@@ -23,11 +23,9 @@ if (isset($_GET['mobile'])) {
             $_SESSION['user_id'] = $userData[0]['id'];
         }
 
-        // Include the 'status' in the JSON response
         $response = array('registered' => true, 'verified' => $result[0]['status']);
 
         if ($result[0]['status'] == 0) {
-            // Update payment_verified status as 'request'
             $update_query = "UPDATE users SET payment_verified = 'request' WHERE mobile = '$mobile'";
             $db->sql($update_query);
         }

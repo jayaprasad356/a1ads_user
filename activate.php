@@ -6,14 +6,11 @@ $db->connect();
 $db->sql("SET NAMES 'utf8'");
 
 if (isset($_POST['btnAdd'])) {
-    // Assuming 'order_id' is a field in your form
     $order_id = $db->escapeString($_POST['order_id']);
 
-    // Check if 'mobile' is set in the session
     if (isset($_SESSION['mobile'])) {
         $mobile = $_SESSION['mobile'];
 
-        // Update order_id in the users table
         $update_query = "UPDATE users SET order_id = '$order_id' WHERE mobile = '$mobile'";
         $db->sql($update_query);
     }
@@ -103,7 +100,6 @@ $(document).ready(function () {
                         } else {
                             $('#newJoinerMobile').val(mobileNumber);
                             $('#newJoinerMobile').prop('disabled', true);
-                            // Mobile number is registered, open the "Add Query" modal
                             openAddQueryModal();
                         }
                     } else {
@@ -122,36 +118,6 @@ $(document).ready(function () {
         }
     });
 
-    // Function to handle the "View" button click
-    $('#viewButton').click(function () {
-        var mobileNumber = $('#mobile').val();
-        if (mobileNumber !== '') {
-            $('#mobileValidationMessage').hide();
-
-            // Check if the mobile number is registered
-            $.ajax({
-                url: 'check_mobile.php?mobile=' + mobileNumber,
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    if (data.registered) {
-                        // Mobile number is registered, open the "Add Query" modal
-                        openAddQueryModal();
-                    } else {
-                        // Mobile number is not registered, display an error message
-                        alert('This number is not registered ,Please register in app .');
-                    }
-                },
-                error: function () {
-                    // Handle any errors here
-                    alert('Error checking mobile number.');
-                }
-            });
-        } else {
-            // If mobile number is empty, show validation message
-            $('#mobileValidationMessage').show();
-        }
-    });
 
     $('#clearFormButton').click(function () {
         $('#mobile').val('');
