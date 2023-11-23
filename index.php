@@ -34,6 +34,8 @@ $db->sql("SET NAMES 'utf8'");
             <a href="https://wa.me/+917339276625" class="btn btn-success">I want to Join or Refer Friend</a>
 
             </div>
+            <br>
+            <br>
             <div class="row">
             <a href="query.php" class="btn btn-primary">I have Queries to ask</a>
             </div>
