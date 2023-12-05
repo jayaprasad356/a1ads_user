@@ -11,6 +11,14 @@ include_once('includes/functions.php');
 $res = [];
 $user_id = NULL;
 
+function isRequestAllowed() {
+    $currentTime = strtotime(date('H:i:s'));
+    $startTime = strtotime('09:00:00');
+    $endTime = strtotime('18:00:00');
+
+    return ($currentTime >= $startTime && $currentTime <= $endTime);
+}
+
 if (isset($_GET['mobile'])) {
     $mobile = $db->escapeString($_GET['mobile']);
 
@@ -35,20 +43,24 @@ if (isset($_POST['btnAdd'])) {
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
     if ($user_id !== null) {
-        $checkstatus = null;
-        $sql_query = "SELECT status FROM query WHERE user_id = '$user_id' AND status = '0'";
-        $db->sql($sql_query);
-        $checkstatus = $db->getResult();
+        if (isRequestAllowed()) {
+            $checkstatus = null;
+            $sql_query = "SELECT status FROM query WHERE user_id = '$user_id' AND status = '0'";
+            $db->sql($sql_query);
+            $checkstatus = $db->getResult();
 
-        if (!empty($checkstatus)) {
-            echo "<script>alert('You already have a pending query. Please wait.');</script>";
+            if (!empty($checkstatus)) {
+                echo "<script>alert('You already have a pending query. Please wait.');</script>";
+            } else {
+                $sql_query = "INSERT INTO query (user_id, title, description) VALUES ('$user_id', '$title', '$description')";
+                $db->sql($sql_query);
+
+                $sql_query = "SELECT * FROM query WHERE title = '$title' AND description = '$description' AND user_id = '$user_id'";
+                $db->sql($sql_query);
+                $insertedData = $db->getResult();
+            }
         } else {
-            $sql_query = "INSERT INTO query (user_id, title, description) VALUES ('$user_id', '$title', '$description')";
-            $db->sql($sql_query);
-
-            $sql_query = "SELECT * FROM query WHERE title = '$title' AND description = '$description' AND user_id = '$user_id'";
-            $db->sql($sql_query);
-            $insertedData = $db->getResult();
+            echo "<script>alert('Requests Query Timing between 9 AM and 6 PM.');</script>";
         }
     } else {
         $errorMessage = 'User not found. Query insertion failed.';
