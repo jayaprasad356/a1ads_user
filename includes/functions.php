@@ -398,4 +398,27 @@ class functions
         }
         return $token;
     }
+    
+    public function validate_image($file) {
+        $allowed_extensions = ['jpg', 'jpeg', 'png'];
+        $max_file_size = 5 * 1024 * 1024; // 5 MB
+
+        // Check if file size exceeds the allowed limit
+        if ($file['size'] > $max_file_size) {
+            return 'File size exceeds the allowed limit.';
+        }
+
+        // Check if the file extension is allowed
+        $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($file_extension, $allowed_extensions)) {
+            return 'Invalid file extension. Allowed extensions: ' . implode(', ', $allowed_extensions);
+        }
+
+        // Additional validation logic can be added here
+        
+        // If everything is fine, return true
+        return true;
+    }
 }
+
+
