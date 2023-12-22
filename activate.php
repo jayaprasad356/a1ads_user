@@ -5,6 +5,8 @@ $db = new Database();
 $db->connect();
 $db->sql("SET NAMES 'utf8'");
 
+$errorMessage = ''; // Initialize error message variable
+
 if (isset($_POST['btnAdd'])) {
     $order_id = $db->escapeString($_POST['order_id']);
 
@@ -14,9 +16,43 @@ if (isset($_POST['btnAdd'])) {
         $update_query = "UPDATE users SET order_id = '$order_id' WHERE mobile = '$mobile'";
         $db->sql($update_query);
     }
+
+    // Handle image upload
+    if ($_FILES['image']['size'] != 0 && $_FILES['image']['error'] == 0 && !empty($_FILES['image'])) {
+        $result = validate_image($_FILES["image"]); // Assuming you have a function called validate_image
+
+        if ($result === true) {
+            $extension = pathinfo($_FILES["image"]["name"])['extension'];
+            $target_path = 'upload/images/';
+            $filename = microtime(true) . '.' . strtolower($extension);
+            $full_path = $target_path . $filename;
+
+            if (!move_uploaded_file($_FILES["image"]["tmp_name"], $full_path)) {
+                $errorMessage = 'Error uploading image.';
+            } else {
+                $upload_image = 'upload/images/' . $filename;
+                $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
+                $sql = "INSERT INTO payments (payment_screenshot, user_id ,order_id) VALUES ('$upload_image', '$user_id','$order_id')";
+                $db->sql($sql);
+            }
+        } else {
+            $errorMessage = $result;
+        }
+    } else {
+        $errorMessage = 'Image not found or invalid.';
+    }
 }
 
+// Assuming you have a function called validate_image
+function validate_image($image) {
+    // Implement your image validation logic here
+    // Return true if the image is valid, otherwise return an error message
+    // For example, check file type, size, etc.
+    return true;
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -65,6 +101,12 @@ if (isset($_POST['btnAdd'])) {
                     <label for="order_id">Order ID:</label>
                     <input type="text" class="form-control" id="order_id" name="order_id" required>
                 </div>
+                <br>
+                <div class="form-group">
+                                        <label for="exampleInputFile">Image</label> <i class="text-danger asterik">*</i><?php echo isset($error['payment_screenshot']) ? $error['payment_screenshot'] : ''; ?>
+                                        <input type="file" name="image" onchange="readURL(this);" accept="image/png,  image/jpeg" id="payment_screenshot" required/><br>
+                                        <img id="blah" src="#" alt="" />
+                                    </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="clearFormButton">Clear</button>
                     <button type="submit" class="btn btn-primary" name="btnAdd">Request Activation</button>
@@ -139,6 +181,23 @@ $(document).ready(function () {
 
 
 
+</script>
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#blah')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(200)
+                    .css('display', 'block');
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 </script>
 
 </body>
