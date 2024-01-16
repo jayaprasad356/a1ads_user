@@ -72,18 +72,20 @@ if (isset($_GET['id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <style>
-   @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+
 
 .custom-gradient {
-    background: linear-gradient(to right, #ffcc00, #ff9900);
+    background: #f2f2f2;
     border-radius: 40px;
-    min-width: 200px;
-    height: 50px;
+        min-width: 200px;
+        height: 50px;
+
 }
 
 .custom-img {
     width: 50%;
-    max-width: 100px;
+    max-width: 80px;
     height: auto;
     margin-bottom: 10px;
 }
@@ -104,7 +106,7 @@ if (isset($_GET['id'])) {
     width: 330px;
     margin-top: 20px;
     border-radius: 10px;
-    background: linear-gradient(to bottom, orange, violet);
+    background: linear-gradient(to bottom, #d87423, #942156); 
 }
 
 </style>
@@ -114,19 +116,20 @@ if (isset($_GET['id'])) {
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-12 col-sm-12" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; min-height: 100vh; background-color: darkblue;">
+        <div class="col-12 col-sm-12 custom-gradient" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; min-height: 100vh; color: #f8f8f8;">
                 <div style="display: flex; align-items: center; justify-content: center; padding: 20px; margin-right: 50px;">
-                    <img src="https://i.pinimg.com/1200x/b1/88/c6/b188c6801ad1d71d3c962c6e4aa2d0cf.jpg" alt="" style="width: 100px; height: auto; border-radius: 20px;">
+                    <img src="images/Group.png" alt="" style="width: 100px; height: auto; border-radius: 20px;">
 
-                    <div style="margin-left: 20px; color: #ffd700; font-family: 'Archivo Black', sans-serif;">
-                        <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif; font-weight: bold;"><?php echo isset($name) ? $name : ''; ?></label><br>
-                        <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif;"><?php echo isset($mobile) ? $mobile : ''; ?></label><br>
-                        <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif;"><?php echo isset($refer_code) ? $refer_code : ''; ?></label>
-                    </div>
+                    <div style="margin-left: 20px; color:black;">
+    <label style="white-space: nowrap;font-family: 'IBM Plex Sans', sans-serif; font-weight: bold;"><?php echo isset($name) ? $name : ''; ?></label><br>
+    <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif;"><?php echo isset($mobile) ? $mobile : ''; ?></label><br>
+    <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif;"><?php echo isset($refer_code) ? $refer_code : ''; ?></label>
+</div>
                 </div>
                 <div class="row">
-                    <h1 style="font-size: 11.5px; margin-left: 10px; color: #ffd700; font-family: 'Archivo Black', sans-serif; font-weight: bold;">I'm earning money by you watching my advertisement</h1>
+                    <h1 style="font-size:10px;margin-right: 80px;color:black;font-family: 'IBM Plex Sans', sans-serif; font-weight: bold;padding:10px;">I'm earning money by you watching my advertisement</h1>
                 </div>
+                
                 <div class="row">
                     <div class="col-12">
                         <div class="image-container">
@@ -136,29 +139,30 @@ if (isset($_GET['id'])) {
                         </div>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; ;margin-top:20px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="#ffd700" class="bi bi-easel" viewBox="0 0 16 16">
-                        <path d="M8 0a.5.5 0 0 1 .473.337L9.046 2H14a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1.85l1.323 3.837a.5.5 0 1 1-.946.326L11.092 11H8.5v3a.5.5 0 0 1-1 0v-3H4.908l-1.435 4.163a.5.5 0 1 1-.946-.326L3.85 11H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h4.954L7.527.337A.5.5 0 0 1 8 0M2 3v7h12V3z" />
-                    </svg>
-                    <h1 style="font-size: 15px;margin-top:10px; margin-left: 16px; color: #ffd700; font-family: 'Archivo Black', sans-serif; font-weight: bold;">Ads Activity Performance</h1>
-                </div>
+                <div style="display: flex; align-items: center; margin-top: 20px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="black" class="bi bi-easel-fill" viewBox="0 0 16 16" style="margin-right: 10px;">
+        <path d="M8.473.337a.5.5 0 0 0-.946 0L6.954 2H2a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h1.85l-1.323 3.837a.5.5 0 1 0 .946.326L4.908 11H7.5v2.5a.5.5 0 0 0 1 0V11h2.592l1.435 4.163a.5.5 0 0 0 .946-.326L12.15 11H14a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H9.046z"/>
+    </svg>
+    <h1 style="font-size:18px; margin-right: 50px; margin-top: 10px; color: black;font-family: 'IBM Plex Sans', sans-serif; font-weight: bold;">Ads Activity Performance</h1>
+</div>
+
                 <div class="row">
                     <div class="card-box">
                         <div style="display: flex; justify-content: space-between;">
                             <div style="text-align: center; margin-right: 10px;">
                                 <h6 style="color:white;">Total Earnings</h6>
-                                <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif; color:#07e4e4;">135</label><br>
+                                <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif; color:#07e4e4;">135</label><br>
                             </div>
                             <div style="text-align: center;">
                                 <h6 style="color:white;">Total Withdrawals</h6>
-                                <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif; color:#07e4e4;">1234</label><br>
+                                <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif; color:;">1234</label><br>
                             </div>
                         </div>
                     </div>
                 </div>
                 <br>
                 <div class="row">
-                    <label style="white-space: nowrap; margin-right: 180px; color: #ffd700;font-family: 'Archivo Black', sans-serif; font-weight: bold;">Withdrawal List</label><br>
+                    <label style="white-space: nowrap; margin-right: 180px; color: black; font-family: 'IBM Plex Sans', sans-serif; font-weight: bold;">Withdrawal List</label><br>
                 </div>
             </div>
         </div>
