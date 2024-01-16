@@ -53,7 +53,9 @@ if (isset($_GET['id'])) {
 
     if (count($res) > 0) {
         $name = $res[0]['name'];
+        $mobile = $res[0]['mobile'];
         $refer_code = $res[0]['refer_code'];
+  
     }
 }
 ?>
@@ -66,72 +68,103 @@ if (isset($_GET['id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
     <style>
-        .custom-gradient {
-            background: linear-gradient(to right, #ffcc00, #ff9900);
-            border-radius: 40px;
-            min-width: 200px;
-            height: 50px;
-        }
+   @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
 
-        .loading-line-container {
-            background-color: white;
-            border-radius: 5px;
-            width: 100%;
-            height: 20px;
-        }
+.custom-gradient {
+    background: linear-gradient(to right, #ffcc00, #ff9900);
+    border-radius: 40px;
+    min-width: 200px;
+    height: 50px;
+}
 
-        .loading-line {
-            height: 100%;
-            width: 0;
-            background: linear-gradient(to right, #ffcc00, #ff9900);
-            transition: width 12s linear;
-            /* Set the transition duration to 12 seconds */
-            margin-top: 10px;
-            border-radius: 5px;
-        }
+.custom-img {
+    width: 50%;
+    max-width: 100px;
+    height: auto;
+    margin-bottom: 10px;
+}
 
-        .responsive-image {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            margin-top: 50px;
-        }
-    </style>
+.image-container {
+    display: flex;
+    justify-content:center;
+    gap: 10px;
+    flex-wrap: wrap; 
+}
+
+
+
+.card-box {
+    border: 1px solid #ccc;
+    padding: 30px;
+    text-align: center;
+    width: 330px;
+    margin-top: 20px;
+    border-radius: 10px;
+    background: linear-gradient(to bottom, orange, violet);
+}
+
+</style>
 </head>
+
 
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-12 col-sm-12" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background-color: darkblue;">
-                <div style="display: flex; align-items: center; margin-top: 10px; width: 200px; margin-right:70px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" style="color: white;" fill="white" class="bi bi-person-circle" viewBox="0 0 16 16">
-                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                    </svg>
+            <div class="col-12 col-sm-12" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; min-height: 100vh; background-color: darkblue;">
+                <div style="display: flex; align-items: center; justify-content: center; padding: 20px; margin-right: 50px;">
+                    <img src="https://i.pinimg.com/1200x/b1/88/c6/b188c6801ad1d71d3c962c6e4aa2d0cf.jpg" alt="" style="width: 100px; height: auto; border-radius: 20px;">
 
-                    <div style="margin-left: 20px; color: white;">
-                        <label style="white-space: nowrap;"><?php echo $name; ?></label><br>
-                        <label style="white-space: nowrap;"><?php echo $refer_code; ?></label>
+                    <div style="margin-left: 20px; color: #ffd700; font-family: 'Archivo Black', sans-serif;">
+                        <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif; font-weight: bold;"><?php echo isset($name) ? $name : ''; ?></label><br>
+                        <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif;"><?php echo isset($mobile) ? $mobile : ''; ?></label><br>
+                        <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif;"><?php echo isset($refer_code) ? $refer_code : ''; ?></label>
                     </div>
                 </div>
-
-                <div class="text-center">
-                    <!-- Add the icon and name here -->
-                    <img src="<?php echo $ads_image; ?>" alt="" class="responsive-image">
-                    <p class="label-dark-bold" style="color: white;">Click here to purchase</p>
-                    <button id="watchAdsBtn" class="btn label-dark-bold custom-gradient text-white">Watch Ads</button>
-                    <br>
-                    <div class="loading-line-container">
-                        <div id="loadingLine" class="loading-line"></div>
+                <div class="row">
+                    <h1 style="font-size: 11.5px; margin-left: 10px; color: #ffd700; font-family: 'Archivo Black', sans-serif; font-weight: bold;">I'm earning money by you watching my advertisement</h1>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="image-container">
+                            <img class="card-img-top img-fluid custom-img" src="<?php echo $ads_image; ?>" alt="Advertisement Image">
+                            <img class="card-img-top img-fluid custom-img" src="<?php echo $ads_image; ?>" alt="Advertisement Image">
+                            <img class="card-img-top img-fluid custom-img" src="<?php echo $ads_image; ?>" alt="Advertisement Image">
+                        </div>
                     </div>
+                </div>
+                <div style="display: flex; align-items: center; ;margin-top:20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="#ffd700" class="bi bi-easel" viewBox="0 0 16 16">
+                        <path d="M8 0a.5.5 0 0 1 .473.337L9.046 2H14a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1.85l1.323 3.837a.5.5 0 1 1-.946.326L11.092 11H8.5v3a.5.5 0 0 1-1 0v-3H4.908l-1.435 4.163a.5.5 0 1 1-.946-.326L3.85 11H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h4.954L7.527.337A.5.5 0 0 1 8 0M2 3v7h12V3z" />
+                    </svg>
+                    <h1 style="font-size: 15px;margin-top:10px; margin-left: 16px; color: #ffd700; font-family: 'Archivo Black', sans-serif; font-weight: bold;">Ads Activity Performance</h1>
+                </div>
+                <div class="row">
+                    <div class="card-box">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div style="text-align: center; margin-right: 10px;">
+                                <h6 style="color:white;">Total Earnings</h6>
+                                <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif; color:#07e4e4;">135</label><br>
+                            </div>
+                            <div style="text-align: center;">
+                                <h6 style="color:white;">Total Withdrawals</h6>
+                                <label style="white-space: nowrap; font-family: 'Archivo Black', sans-serif; color:#07e4e4;">1234</label><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <label style="white-space: nowrap; margin-right: 180px; color: #ffd700;font-family: 'Archivo Black', sans-serif; font-weight: bold;">Withdrawal List</label><br>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
