@@ -67,8 +67,8 @@ if (isset($_GET['id'])) {
             // Define status labels based on the status values.
             $statusLabels = array(
                 '0' => '<span class="text-primary">Processing</span>',
-                '1' => '<span class="text-success">Fixed</span>',
-                '2' => '<span class="text-danger">Rejected</span>',
+                '1' => '<span class="text-success">paid</span>',
+                '2' => '<span class="text-danger">cancelled</span>',
             );
 
         
@@ -94,9 +94,9 @@ if (isset($_GET['id'])) {
     <title>Document</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Goblin+One&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
 
     <style>
- @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
 
 
 .custom-gradient {
@@ -132,6 +132,61 @@ if (isset($_GET['id'])) {
     border-radius: 10px;
     background: linear-gradient(to bottom, #d87423, #942156); 
 }
+.card-body {
+    border: 1px solid #ccc;
+    padding: 15px;
+    width: 330px;
+    margin-top: 15px;
+    border-radius: 10px;
+    background: #c5c8e9;
+    display: flex;
+    flex-direction: column;
+    height: 60px;
+    position: relative; 
+}
+.status {
+    color: white;
+    font-size: 17px;
+    text-align: center;
+    font-family: "Lato", sans-serif;
+    font-weight: bold;
+    position: absolute;
+    bottom: 25px;
+    left: 80px;
+}
+
+
+.datetime {
+    color: black;
+    font-size: 10px;
+    text-align: center;
+    position: absolute;
+    top:35px; 
+    left: 80px; 
+    font-family: "Lato", sans-serif;
+   
+}
+
+.details {
+    color: #cd7e52;
+   font-family: "Lato", sans-serif;
+    font-weight: bold;
+    position: absolute;
+    bottom: 0px; 
+    right: 10px; 
+}
+.corner-image {
+    position: absolute;
+    top: 10px; 
+    right: 275px;
+    width: 40px; 
+    height: 40px; 
+}
+
+.row-1 {
+    display: flex;
+    flex-direction: column;
+}
 
 
 </style>
@@ -141,7 +196,7 @@ if (isset($_GET['id'])) {
 <body>
     <div class="container">
         <div class="row">
-        <div class="col-12 col-sm-12 custom-gradient" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; min-height: 120vh; color: #f8f8f8;">
+        <div class="col-12 col-sm-12 custom-gradient" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; min-height: 130vh; color: #f8f8f8;">
                 <div style="display: flex; align-items: center; justify-content: center; padding: 20px; margin-right: 50px;">
                     <?php
     $imagePath = ($gender == 'male') ? 'images/Group.png' : 'https://static.vecteezy.com/system/resources/previews/010/966/841/original/avatar-girl-cartoon-free-vector.jpg';
@@ -191,25 +246,31 @@ if (isset($_GET['id'])) {
                 <br>
                
 <div class="row">
-<label style="white-space: nowrap; margin-right: 180px; color: black; font-family: 'IBM Plex Sans', sans-serif; font-weight: bold; text-decoration: underline;">Withdrawal List :</label><br>
+<label style="white-space: nowrap; margin-right: 180px; color: black; font-family: 'IBM Plex Sans', sans-serif; font-weight: bold; text-decoration: underline;">Withdrawal List :</label>
 </div>
-<div class="row ">
-                <?php
-                if ($withdrawalData) {
-                    foreach ($withdrawalData as $withdrawalRow) {
-                        echo '<div class="col">';
-                        echo '<label style="white-space: nowrap; margin-right: 70px; color: black; font-family: \'IBM Plex Sans\', sans-serif; font-weight: bold;">Id: ' . $withdrawalRow['id'] . '</label><br>';
-                        echo '<label style="white-space: nowrap; margin-right: 70px; color: black; font-family: \'IBM Plex Sans\', sans-serif; font-weight: bold;">Amount: ₹' . $withdrawalRow['amount'] . '</label><br>';
-                        echo '<label style="white-space: nowrap; margin-right: 70px; color: black; font-family: \'IBM Plex Sans\', sans-serif; font-weight: bold;">Status: ' . getStatusLabel($withdrawalRow['status']) . '</label><br>';
-                        echo '<label style="white-space: nowrap; margin-right: 70px; color: black; font-family: \'IBM Plex Sans\', sans-serif; font-weight: bold;">Datetime: ' . $withdrawalRow['datetime'] . '</label><br>';
-                        echo '</div>';
-                       
-                    }
-                } else {
-                    echo 'No withdrawal details found.';
-                }
-                ?>
+<div class="row-1">
+    <?php
+    $withdrawalQuery = "SELECT * FROM withdrawals WHERE user_id = $userID";
+    $db->sql($withdrawalQuery);
+    $withdrawalData = $db->getResult();
+
+    foreach ($withdrawalData as $withdrawal) {
+        ?>
+        <div class="card-body">
+        <img src="images/transfer.png" alt="Image" class="corner-image">
+            <div class="status"><?php echo getStatusLabel($withdrawal['status']); ?></div>
+            <div class="datetime"><?php echo $withdrawal['datetime']; ?></div>
+            <div class="details">
+                <p>₹<?php echo $withdrawal['amount']; ?></p>
+                
+                <!-- Add more details as needed -->
             </div>
+        </div>
+        <?php 
+    }
+    ?>
+</div>
+
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
