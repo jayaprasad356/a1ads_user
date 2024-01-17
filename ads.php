@@ -8,7 +8,7 @@ include('includes/variables.php');
 include_once('includes/custom-functions.php');
 include_once('includes/functions.php');
 $fn = new custom_functions;
-define('API_URL', 'https://colorchallenge.graymatterworks.com/api/ads.php/');
+/*define('API_URL', 'https://colorchallenge.graymatterworks.com/api/ads.php/');
 
 include_once('includes/crud.php');
 
@@ -43,7 +43,7 @@ if ($response === false) {
     }
 }
 
-curl_close($curl);
+curl_close($curl);*/
 
 if (isset($_GET['id'])) {
     $userID = $db->escapeString($_GET['id']);
@@ -81,6 +81,7 @@ if (isset($_GET['id'])) {
     }
 }
 ?>
+
 
 
 
@@ -205,7 +206,15 @@ if (isset($_GET['id'])) {
 
                     <div style="margin-left: 20px; color:black;">
     <label style="white-space: nowrap;font-family: 'IBM Plex Sans', sans-serif; font-weight: bold;"><?php echo isset($name) ? $name : ''; ?></label><br>
-    <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif;"><?php echo isset($mobile) ? $mobile : ''; ?></label><br>
+    <?php
+$mobile = isset($mobile) ? $mobile : '';
+
+// Display the first two digits, stars, and last two digits
+$maskedMobile = substr($mobile, 0, 2) . str_repeat('*', max(0, strlen($mobile) - 4)) . substr($mobile, -2);
+?>
+
+<label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif;"><?php echo $maskedMobile; ?></label><br>
+
     <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif;"><?php echo isset($refer_code) ? $refer_code : ''; ?></label>
 </div>
                 </div>
@@ -214,14 +223,24 @@ if (isset($_GET['id'])) {
                 </div>
                 
                 <div class="row">
-                    <div class="col-12">
-                        <div class="image-container">
-                            <img class="card-img-top img-fluid custom-img" src="<?php echo $ads_image; ?>" alt="Advertisement Image">
-                            <img class="card-img-top img-fluid custom-img" src="<?php echo $ads_image; ?>" alt="Advertisement Image">
-                            <img class="card-img-top img-fluid custom-img" src="<?php echo $ads_image; ?>" alt="Advertisement Image">
-                        </div>
-                    </div>
-                </div>
+    <div class="col-12">
+        <div class="image-container">
+            <?php
+            $userQuery = "SELECT * FROM product LIMIT 3";
+            $db->sql($userQuery);
+            $productdata = $db->getResult();
+
+            foreach ($productdata as $product) {
+                $image = $product['image'];
+                ?>
+                <img class="card-img-top img-fluid custom-img" src="<?php echo $image; ?>" alt="Advertisement Image">
+            <?php
+            }
+            ?>
+        </div>
+    </div>
+</div>
+
                 <div style="display: flex; align-items: center; margin-top: 20px;">
     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="black" class="bi bi-easel-fill" viewBox="0 0 16 16" style="margin-right: 10px;">
         <path d="M8.473.337a.5.5 0 0 0-.946 0L6.954 2H2a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h1.85l-1.323 3.837a.5.5 0 1 0 .946.326L4.908 11H7.5v2.5a.5.5 0 0 0 1 0V11h2.592l1.435 4.163a.5.5 0 0 0 .946-.326L12.15 11H14a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H9.046z"/>
