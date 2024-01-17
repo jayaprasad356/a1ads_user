@@ -232,14 +232,19 @@ $maskedMobile = substr($mobile, 0, 2) . str_repeat('*', max(0, strlen($mobile) -
 
             foreach ($productdata as $product) {
                 $image = $product['image'];
-                ?>
-                <img class="card-img-top img-fluid custom-img" src="<?php echo $image; ?>" alt="Advertisement Image">
-            <?php
+                if (!empty($image)) {
+                    $imageHtml = "<a data-lightbox='category' href='" . $image . "' data-caption='" . $image . "'>" .
+                                 "<img class='card-img-top img-fluid custom-img' src='" . $image . "' title='" . $image . "' height='50' /></a>";
+                    echo $imageHtml;
+                } else {
+                    echo 'No Image';
+                }
             }
             ?>
         </div>
     </div>
 </div>
+
 
                 <div style="display: flex; align-items: center; margin-top: 20px;">
     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="black" class="bi bi-easel-fill" viewBox="0 0 16 16" style="margin-right: 10px;">
