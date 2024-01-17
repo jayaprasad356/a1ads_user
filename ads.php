@@ -47,7 +47,9 @@ curl_close($curl);
 
 if (isset($_GET['id'])) {
     $userID = $db->escapeString($_GET['id']);
-    $userQuery = "SELECT * FROM users WHERE id =" . $userID;
+
+    // Retrieve user information
+    $userQuery = "SELECT * FROM users WHERE id = $userID";
     $db->sql($userQuery);
     $userData = $db->getResult();
 
@@ -55,33 +57,32 @@ if (isset($_GET['id'])) {
         $name = $userData[0]['name'];
         $mobile = $userData[0]['mobile'];
         $refer_code = $userData[0]['refer_code'];
-        $gender = $userData[0]['gender']; // Added line to retrieve gender
-    }
-}
+        $gender = $userData[0]['gender']; 
 
-if (isset($_GET['id'])) {
-    $withdrawalID = $db->escapeString($_GET['id']);
-    $withdrawalQuery = "SELECT * FROM withdrawals WHERE id =" . $withdrawalID;
-    $db->sql($withdrawalQuery);
-    $withdrawalData = $db->getResult(); 
+        // Retrieve withdrawal information for the specific user
+        $withdrawalQuery = "SELECT * FROM withdrawals WHERE user_id = $userID";
+        $db->sql($withdrawalQuery);
+        $withdrawalData = $db->getResult();
 
-    function getStatusLabel($status) {
-        // Define status labels based on the status values.
-        $statusLabels = array(
-            '0' => '<span class="text-primary">Processing</span>',
-            '1' => '<span class="text-success">Fixed</span>',
-            '2' => '<span class="text-danger">Rejected</span>',
-        );
+        function getStatusLabel($status) {
+            // Define status labels based on the status values.
+            $statusLabels = array(
+                '0' => '<span class="text-primary">Processing</span>',
+                '1' => '<span class="text-success">Fixed</span>',
+                '2' => '<span class="text-danger">Rejected</span>',
+            );
 
-        // Check if the status exists in the array, and return the label.
-        if (isset($statusLabels[$status])) {
-            return $statusLabels[$status];
-        } else {
-            return 'Unknown Status';
+            // Check if the status exists in the array, and return the label.
+            if (isset($statusLabels[$status])) {
+                return $statusLabels[$status];
+            } else {
+                return 'Unknown Status';
+            }
         }
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -143,8 +144,8 @@ if (isset($_GET['id'])) {
         <div class="row">
         <div class="col-12 col-sm-12 custom-gradient" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; min-height: 120vh; color: #f8f8f8;">
                 <div style="display: flex; align-items: center; justify-content: center; padding: 20px; margin-right: 50px;">
-                    <?php
-    $imagePath = ($gender == 'male') ? 'images/Group.png' : 'https://static.vecteezy.com/system/resources/previews/010/966/841/original/avatar-girl-cartoon-free-vector.jpg';
+                <?php
+    $imagePath = (isset($gender) && strtolower($gender) === 'male') ? 'images/Group.png' : 'https://static.vecteezy.com/system/resources/previews/010/966/841/original/avatar-girl-cartoon-free-vector.jpg';
     ?>
     <img src="<?php echo $imagePath; ?>" alt="" style="width: 100px; height: auto; border-radius: 20px;">
 
@@ -198,10 +199,12 @@ if (isset($_GET['id'])) {
                 if ($withdrawalData) {
                     foreach ($withdrawalData as $withdrawalRow) {
                         echo '<div class="col">';
+                        echo '<label style="white-space: nowrap; margin-right: 70px; color: black; font-family: \'IBM Plex Sans\', sans-serif; font-weight: bold;">Id: ' . $withdrawalRow['id'] . '</label><br>';
                         echo '<label style="white-space: nowrap; margin-right: 70px; color: black; font-family: \'IBM Plex Sans\', sans-serif; font-weight: bold;">Amount: ₹' . $withdrawalRow['amount'] . '</label><br>';
                         echo '<label style="white-space: nowrap; margin-right: 70px; color: black; font-family: \'IBM Plex Sans\', sans-serif; font-weight: bold;">Status: ' . getStatusLabel($withdrawalRow['status']) . '</label><br>';
                         echo '<label style="white-space: nowrap; margin-right: 70px; color: black; font-family: \'IBM Plex Sans\', sans-serif; font-weight: bold;">Datetime: ' . $withdrawalRow['datetime'] . '</label><br>';
                         echo '</div>';
+                       
                     }
                 } else {
                     echo 'No withdrawal details found.';
