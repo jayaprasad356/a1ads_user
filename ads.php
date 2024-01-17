@@ -48,7 +48,7 @@ curl_close($curl);
 if (isset($_GET['id'])) {
     $userID = $db->escapeString($_GET['id']);
 
-    // Retrieve user information
+
     $userQuery = "SELECT * FROM users WHERE id = $userID";
     $db->sql($userQuery);
     $userData = $db->getResult();
@@ -57,9 +57,8 @@ if (isset($_GET['id'])) {
         $name = $userData[0]['name'];
         $mobile = $userData[0]['mobile'];
         $refer_code = $userData[0]['refer_code'];
-        $gender = $userData[0]['gender']; // Added line to retrieve gender
+        $gender = $userData[0]['gender']; 
 
-        // Retrieve withdrawal information for the specific user
         $withdrawalQuery = "SELECT * FROM withdrawals WHERE user_id = $userID";
         $db->sql($withdrawalQuery);
         $withdrawalData = $db->getResult();
@@ -72,7 +71,7 @@ if (isset($_GET['id'])) {
                 '2' => '<span class="text-danger">Rejected</span>',
             );
 
-            // Check if the status exists in the array, and return the label.
+        
             if (isset($statusLabels[$status])) {
                 return $statusLabels[$status];
             } else {
