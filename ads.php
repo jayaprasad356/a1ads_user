@@ -231,10 +231,10 @@ $maskedMobile = substr($mobile, 0, 2) . str_repeat('*', max(0, strlen($mobile) -
             $productdata = $db->getResult();
 
             foreach ($productdata as $product) {
-                $image = $product['image'];
-                if (!empty($image)) {
-                    $imageHtml = "<a data-lightbox='category' href='" . $image . "' data-caption='" . $image . "'>" .
-                                 "<img class='card-img-top img-fluid custom-img' src='" . $image . "' title='" . $image . "' height='50' /></a>";
+                $imagePath = DOMAIN_URL . $product['image'];
+
+                if (!empty($imagePath)) {
+                    $imageHtml = "<img class='card-img-top img-fluid custom-img' src='" . $imagePath . "' alt='Product Image' height='50' />";
                     echo $imageHtml;
                 } else {
                     echo 'No Image';
