@@ -264,7 +264,7 @@ $maskedMobile = substr($mobile, 0, 2) . str_repeat('*', max(0, strlen($mobile) -
                             </div>
                             <div style="text-align: center;">
                                 <h6 style="color:white;">Total Withdrawals</h6>
-                                <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif; color:#07e4e4;">₹ <?php echo $withdrawal?></label><br>
+                                <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif; color:#07e4e4;">₹ <?php echo $withdrawals?></label><br>
                             </div>
                         </div>
                     </div>
