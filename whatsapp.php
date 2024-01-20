@@ -32,6 +32,7 @@ if (isset($_GET['mobile'])) {
 
 if (isset($_POST['btnAdd'])) {
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+    $no_of_views = isset($_POST['no_of_views']) ? $db->escapeString($_POST['no_of_views']) : null;
     if ($_FILES['image']['size'] != 0 && $_FILES['image']['error'] == 0 && !empty($_FILES['image'])) {
         $result = $fn->validate_image($_FILES["image"]);
 
@@ -47,7 +48,7 @@ if (isset($_POST['btnAdd'])) {
             }
 
             $upload_image = 'upload/images' . $filename;
-            $sql = "INSERT INTO whatsapp (image,user_id) VALUES ('$upload_image','$user_id')";
+            $sql = "INSERT INTO whatsapp (image,user_id,no_of_views) VALUES ('$upload_image','$user_id','$no_of_views')";
             $db->sql($sql);
 
 
@@ -104,6 +105,10 @@ if (isset($_POST['btnAdd'])) {
                                         <img id="blah" src="#" alt="" />
                                     </div>
                                 </div>
+                                <div class="form-group">
+                            <label for="no_of_views">No of Views</label>
+                            <input type="number" class="form-control" id="no_of_views" name="no_of_views" required></input>
+                        </div>
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="clearFormButton">Clear</button>
@@ -142,7 +147,6 @@ $(document).ready(function () {
                             alert('User Not-verified');
                             $('#newJoinerMobile').val(mobileNumber);
                             $('#newJoinerMobile').prop('disabled', true);
-                            openAddQueryModal();
                         }
                     } else {
                         // Mobile number is not registered, display an error message
