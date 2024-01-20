@@ -58,6 +58,8 @@ if (isset($_GET['id'])) {
         $mobile = $userData[0]['mobile'];
         $refer_code = $userData[0]['refer_code'];
         $gender = $userData[0]['gender']; 
+        $withdrawals = $userData[0]['withdrawals']; 
+        $earn = $userData[0]['earn']; 
 
         $withdrawalQuery = "SELECT * FROM withdrawals WHERE user_id = $userID";
         $db->sql($withdrawalQuery);
@@ -258,11 +260,11 @@ $maskedMobile = substr($mobile, 0, 2) . str_repeat('*', max(0, strlen($mobile) -
                         <div style="display: flex; justify-content: space-between;">
                             <div style="text-align: center; margin-right: 10px;">
                                 <h6 style="color:white;">Total Earnings</h6>
-                                <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif; color:#07e4e4;">₹ 135</label><br>
+                                <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif; color:#07e4e4;">₹ <?php echo $earn?></label><br>
                             </div>
                             <div style="text-align: center;">
                                 <h6 style="color:white;">Total Withdrawals</h6>
-                                <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif; color:#07e4e4;">₹ 1234</label><br>
+                                <label style="white-space: nowrap; font-family: 'IBM Plex Sans', sans-serif; color:#07e4e4;">₹ <?php echo $withdrawals?></label><br>
                             </div>
                         </div>
                     </div>
