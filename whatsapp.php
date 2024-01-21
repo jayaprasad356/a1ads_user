@@ -93,7 +93,7 @@ if (isset($_POST['btnAdd'])) {
             echo '<p class="alert alert-danger">Cannot upload image.</p>';
         }
     } else {
-        echo '<p class="alert alert-warning">Your Screenshot Already Verified.</p>';
+        echo '<p class="alert alert-warning">Screenshot Already uploaded.</p>';
     }
 }
 
