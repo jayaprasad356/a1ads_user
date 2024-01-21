@@ -23,7 +23,7 @@ function isRequestAllowed() {
 
 if (isset($_SESSION['form_success'])) {
     echo '<script>alert("Uploaded successfully.");</script>';
-    unset($_SESSION['form_success']); // Reset the session variable
+    unset($_SESSION['form_success']); 
 }
 
 if (isset($_GET['mobile'])) {
@@ -34,6 +34,7 @@ if (isset($_GET['mobile'])) {
     $userData = $db->getResult();
   
 }
+
 if (isset($_GET['mobile'])) {
     $mobile = $db->escapeString($_GET['mobile']);
 
@@ -44,46 +45,64 @@ if (isset($_GET['mobile'])) {
     if (!empty($userData)) {
         $user_id = $userData[0]['id']; 
 
-        $sql_query = "SELECT whatsapp.*, users.name,users.mobile FROM whatsapp LEFT JOIN users ON whatsapp.user_id = users.id WHERE users.mobile = '$mobile'";
+        $sql_query = "SELECT whatsapp.*, users.name, users.mobile FROM whatsapp LEFT JOIN users ON whatsapp.user_id = users.id WHERE users.mobile = '$mobile'";
         $db->sql($sql_query);
         $res = $db->getResult();
     } else {
         echo 'User not found.';
     }
 }
+
 if (isset($_POST['btnAdd'])) {
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     $no_of_views = isset($_POST['no_of_views']) ? $db->escapeString($_POST['no_of_views']) : null;
-    if ($_FILES['image']['size'] != 0 && $_FILES['image']['error'] == 0 && !empty($_FILES['image'])) {
-        $result = $fn->validate_image($_FILES["image"]);
 
-        if ($result === true) {
-            $extension = pathinfo($_FILES["image"]["name"])['extension'];
-            $target_path = 'upload/images';
-            $filename = microtime(true) . '.' . strtolower($extension);
-            $full_path = $target_path . "" . $filename;
+    $sql_check = "SELECT image, datetime FROM whatsapp WHERE user_id = '$user_id'";
+    $db->sql($sql_check);
+    $res_check = $db->getResult();
 
-            if (!move_uploaded_file($_FILES["image"]["tmp_name"], $full_path)) {
-                echo '<p class="alert alert-danger">Can not upload image.</p>';
-                return false;
-            }
+    if (empty($res_check[0]['image']) || isUploadAllowed($res_check[0]['datetime'])) {
+        if ($_FILES['image']['size'] != 0 && $_FILES['image']['error'] == 0 && !empty($_FILES['image'])) {
+            $result = $fn->validate_image($_FILES["image"]);
 
-            $upload_image = 'upload/images' . $filename;
-            $sql = "INSERT INTO whatsapp (image,user_id,no_of_views) VALUES ('$upload_image','$user_id','$no_of_views')";
-            $db->sql($sql);
+            if ($result === true) {
+                $extension = pathinfo($_FILES["image"]["name"])['extension'];
+                $target_path = 'upload/images';
+                $filename = microtime(true) . '.' . strtolower($extension);
+                $full_path = $target_path . "" . $filename;
 
-                $_SESSION['form_success'] = true; // Set a session variable for success
+                if (!move_uploaded_file($_FILES["image"]["tmp_name"], $full_path)) {
+                    echo '<p class="alert alert-danger">Can not upload image.</p>';
+                    return false;
+                }
+
+                $upload_image = 'upload/images' . $filename;
+                $current_datetime = date('Y-m-d H:i:s');
+
+                $sql = "INSERT INTO whatsapp (image, user_id, no_of_views, datetime)
+                        VALUES ('$upload_image', '$user_id', '$no_of_views', '$current_datetime')";
+                $db->sql($sql);
+
+                $_SESSION['form_success'] = true; 
                 header("Location: whatsapp.php");
                 exit();
-                
             } else {
                 echo '<p class="alert alert-danger">Query insertion failed.</p>';
             }
         } else {
             echo '<p class="alert alert-danger">Cannot upload image.</p>';
         }
+    } else {
+        echo '<p class="alert alert-warning">Your Screenshot Already Verified.</p>';
     }
+}
 
+function isUploadAllowed($lastUploadDatetime) {
+    $currentDatetime = date('Y-m-d H:i:s');
+    $twentyFourHoursAgo = date('Y-m-d H:i:s', strtotime('-24 hours', strtotime($currentDatetime)));
+
+    return $lastUploadDatetime < $twentyFourHoursAgo;
+}
 ?>
 
 <!-- The rest of your HTML code -->
@@ -119,16 +138,14 @@ if (isset($_POST['btnAdd'])) {
                                 echo '<p class="card-title">' . $row['name'] . '</p>';
                                 echo '<p class="card-text"> ' . $row['mobile'] . '</p>';
                                 echo '<p class="card-text">' . getStatusLabel($row['status']) . '</p>';
-                              // Check if 'image' key exists in the $row array
-    if (isset($row['image'])) {
-        $imagePath = DOMAIN_URL . $row['image'];
-        echo '<p class="card-text">' . '<img src="' . $imagePath . '" alt="Image" width="70" height="70">' . '</p>';
-    }
 
-    // echo '<p class="card-text text-danger">Issue Fix In:' . date('Y-m-d H:i:s', strtotime($row['datetime'] . ' +2 hours')) . '</p>';
+                             if (isset($row['image'])) {
+                               $imagePath = DOMAIN_URL . $row['image'];
+                                echo '<p class="card-text">' . '<img src="' . $imagePath . '" alt="Image" width="70" height="70">' . '</p>';
+                                    }
     
-    echo '<hr>';
-}
+                               echo '<hr>';
+                           }
                         } 
                         function getStatusLabel($status) {
                             // Define status labels based on the status values.
@@ -177,7 +194,7 @@ if (isset($_POST['btnAdd'])) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" id="clearFormButton">Clear</button>
-                    <button type="submit" class="btn btn-primary" name="btnAdd">Request</button>
+                    <button type="submit" class="btn btn-primary" name="btnAdd">Upload</button>
                 </div>
                 </form>
             </div>
@@ -196,40 +213,51 @@ $(document).ready(function () {
     }
 
     $('#addQueryButton').click(function () {
-        // Check if the Mobile Number field is not empty
-        var mobileNumber = $('#mobile').val();
-        if (mobileNumber !== '') {
-            // Check if the mobile number is registered
-            $.ajax({
-                url: 'check_mobiles.php?mobile=' + mobileNumber,
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    if (data.registered) {
-                        if (data.verified === '1') {
+    // Check if the Mobile Number field is not empty
+    var mobileNumber = $('#mobile').val();
+
+    if (mobileNumber !== '') {
+        // Check if the mobile number is registered
+        $.ajax({
+            url: 'check_mobiles.php?mobile=' + mobileNumber,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data.registered) {
+                    if (data.verified === '1') {
+                        if (data.plan === 'A1U') {
+                            // Both conditions met, open modal
                             alert('User verified');
                             openAddQueryModal();
                         } else {
-                            alert('User Not-verified');
+                            // Plan is not A1U, show plan-related error message
+                            alert('You are not a valid user');
                             $('#newJoinerMobile').val(mobileNumber);
                             $('#newJoinerMobile').prop('disabled', true);
                         }
                     } else {
-                        // Mobile number is not registered, display an error message
-                        alert('This number is not registered ,Please register in app .');
+                        // Status is not 1, show status-related error message
+                        alert('User Not-verified');
+                        $('#newJoinerMobile').val(mobileNumber);
+                        $('#newJoinerMobile').prop('disabled', true);
                     }
-                },
-                error: function () {
-                    // Handle any errors here
-                    alert('Error checking mobile number.');
+                } else {
+                    // Mobile number is not registered, display an error message
+                    alert('This number is not registered. Please register in the app.');
                 }
-            });
-        } else {
-            // If mobile number is empty, show validation message
-            $('#mobileValidationMessage').show();
-        }
-    });
-  // Function to handle the "View" button click
+            },
+            error: function () {
+                // Handle any errors here
+                alert('Error checking mobile number.');
+            }
+        });
+    } else {
+        // If mobile number is empty, show validation message
+        $('#mobileValidationMessage').show();
+    }
+});
+
+
   $('#viewButton').click(function () {
         var mobileNumber = $('#mobile').val();
         if (mobileNumber !== '') {
