@@ -61,7 +61,7 @@ if (isset($_POST['btnAdd'])) {
     $db->sql($sql_check);
     $res_check = $db->getResult();
 
-    if (empty($res_check[0]['image']) || isUploadAllowed($res_check[0]['datetime'])) {
+    if (empty($res_check[0]['image'])) {
         if ($_FILES['image']['size'] != 0 && $_FILES['image']['error'] == 0 && !empty($_FILES['image'])) {
             $result = $fn->validate_image($_FILES["image"]);
 
@@ -76,16 +76,24 @@ if (isset($_POST['btnAdd'])) {
                     return false;
                 }
 
-                $upload_image = 'upload/images' . $filename;
+                $upload_image = 'upload/images/' . $filename;
                 $current_datetime = date('Y-m-d H:i:s');
 
-                $sql = "INSERT INTO whatsapp (image, user_id, no_of_views, datetime)
-                        VALUES ('$upload_image', '$user_id', '$no_of_views', '$current_datetime')";
-                $db->sql($sql);
+                $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = CURDATE()";
+                $db->sql($sql_date_check);
+                $res_date_check = $db->getResult();
 
-                $_SESSION['form_success'] = true; 
-                header("Location: whatsapp.php");
-                exit();
+                if ($res_date_check[0]['count'] > 0) {
+                    echo '<p class="alert alert-warning">Screenshot already uploaded </p>';
+                } else {
+                    $sql = "INSERT INTO whatsapp (image, user_id, no_of_views, datetime)
+                            VALUES ('$upload_image', '$user_id', '$no_of_views', '$current_datetime')";
+                    $db->sql($sql);
+
+                    $_SESSION['form_success'] = true; 
+                    header("Location: whatsapp.php");
+                    exit();
+                }
             } else {
                 echo '<p class="alert alert-danger">Query insertion failed.</p>';
             }
@@ -93,15 +101,8 @@ if (isset($_POST['btnAdd'])) {
             echo '<p class="alert alert-danger">Cannot upload image.</p>';
         }
     } else {
-        echo '<p class="alert alert-warning">Screenshot Already uploaded.</p>';
+        echo '<p class="alert alert-warning">Screenshot already uploaded.</p>';
     }
-}
-
-function isUploadAllowed($lastUploadDatetime) {
-    $currentDatetime = date('Y-m-d H:i:s');
-    $lastUploadDate = date('Y-m-d', strtotime($lastUploadDatetime));
-    $currentDate = date('Y-m-d', strtotime($currentDatetime));
-    return $lastUploadDate == $currentDate;
 }
 
 ?>
