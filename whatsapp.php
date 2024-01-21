@@ -76,7 +76,7 @@ if (isset($_POST['btnAdd'])) {
                     return false;
                 }
 
-                $upload_image = 'upload/images/' . $filename;
+                $upload_image = 'upload/images' . $filename;
                 $current_datetime = date('Y-m-d H:i:s');
 
                 $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = CURDATE()";
