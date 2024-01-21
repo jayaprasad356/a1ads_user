@@ -99,10 +99,11 @@ if (isset($_POST['btnAdd'])) {
 
 function isUploadAllowed($lastUploadDatetime) {
     $currentDatetime = date('Y-m-d H:i:s');
-    $twentyFourHoursAgo = date('Y-m-d H:i:s', strtotime('-24 hours', strtotime($currentDatetime)));
-
-    return $lastUploadDatetime < $twentyFourHoursAgo;
+    $lastUploadDate = date('Y-m-d', strtotime($lastUploadDatetime));
+    $currentDate = date('Y-m-d', strtotime($currentDatetime));
+    return $lastUploadDate == $currentDate;
 }
+
 ?>
 
 <!-- The rest of your HTML code -->
