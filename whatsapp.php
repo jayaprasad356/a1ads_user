@@ -56,15 +56,11 @@ if (isset($_GET['mobile'])) {
 if (isset($_POST['btnAdd'])) {
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     $no_of_views = isset($_POST['no_of_views']) ? $db->escapeString($_POST['no_of_views']) : null;
+                    $currentDate = date('Y-m-d');
 
-    $current_hour = date('H');
-    if ($current_hour < 9 || $current_hour >= 18) {
-        echo '<p class="alert alert-warning">Image upload is allowed only between 9 AM and 6 PM.</p>';
-        exit();
-    }
-    $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = CURDATE()";
-    $db->sql($sql_date_check);
-    $res_date_check = $db->getResult();
+    $sql_check = "SELECT image, datetime FROM whatsapp WHERE user_id = '$user_id'";
+    $db->sql($sql_check);
+    $res_check = $db->getResult();
 
     if ($res_date_check[0]['count'] > 0) {
         echo '<p class="alert alert-warning">Screenshot already uploaded.</p>';
@@ -84,16 +80,20 @@ if (isset($_POST['btnAdd'])) {
                     $upload_image = 'upload/images/' . $filename;
                     $current_datetime = date('Y-m-d H:i:s');
 
-                    // Insert the image details into the database
+                $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = CURDATE()";
+                $db->sql($sql_date_check);
+                $res_date_check = $db->getResult();
+
+                if ($res_date_check[0]['count'] > 0) {
+                    echo '<p class="alert alert-warning">Screenshot already uploaded </p>';
+                } else {
                     $sql = "INSERT INTO whatsapp (image, user_id, no_of_views, datetime)
                             VALUES ('$upload_image', '$user_id', '$no_of_views', '$current_datetime')";
                     $db->sql($sql);
 
-                    $_SESSION['form_success'] = true;
+                    $_SESSION['form_success'] = true; 
                     header("Location: whatsapp.php");
                     exit();
-                } else {
-                    echo '<p class="alert alert-danger">Failed to move the uploaded image.</p>';
                 }
             } else {
                 echo '<p class="alert alert-danger">Invalid image format or size.</p>';
@@ -140,7 +140,7 @@ if (isset($_POST['btnAdd'])) {
                                 echo '<p class="card-text">' . getStatusLabel($row['status']) . '</p>';
 
                              if (isset($row['image'])) {
-                               $imagePath = DOMAIN_URL . $row['image'];
+                               $imagePath = 'https://a1ads.site/'.$row['image'];
                                 echo '<p class="card-text">' . '<img src="' . $imagePath . '" alt="Image" width="70" height="70">' . '</p>';
                                     }
     
@@ -151,7 +151,7 @@ if (isset($_POST['btnAdd'])) {
                             // Define status labels based on the status values.
                             $statusLabels = array(
                                 '0' => '<span class="text-primary">Processing</span>',
-                                '1' => '<span class="text-success">Fixed</span>',
+                                '1' => '<span class="text-success">Approved</span>',
                                 '2' => '<span class="text-danger">Rejected</span>',
                             );
                         
@@ -226,12 +226,10 @@ $(document).ready(function () {
                 if (data.registered) {
                     if (data.verified === '1') {
                         if (data.plan === 'A1U') {
-                            // Both conditions met, open modal
-                            alert('User verified');
                             openAddQueryModal();
                         } else {
                             // Plan is not A1U, show plan-related error message
-                            alert('You are not a valid user');
+                            alert('Join Whatsapp status job');
                             $('#newJoinerMobile').val(mobileNumber);
                             $('#newJoinerMobile').prop('disabled', true);
                         }
@@ -330,19 +328,7 @@ $(document).ready(function () {
 </script>
 
 
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/656c9f01bfb79148e599aba3/1hgo4q8fu';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
+
 
 </body>
 </html>
