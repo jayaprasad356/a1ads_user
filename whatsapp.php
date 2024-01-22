@@ -78,8 +78,9 @@ if (isset($_POST['btnAdd'])) {
 
                 $upload_image = 'upload/images' . $filename;
                 $current_datetime = date('Y-m-d H:i:s');
+                $currentDate = date('Y-m-d');
 
-                $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = CURDATE()";
+                $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = '$currentDate'";
                 $db->sql($sql_date_check);
                 $res_date_check = $db->getResult();
 
@@ -142,7 +143,7 @@ if (isset($_POST['btnAdd'])) {
                                 echo '<p class="card-text">' . getStatusLabel($row['status']) . '</p>';
 
                              if (isset($row['image'])) {
-                               $imagePath = DOMAIN_URL . $row['image'];
+                               $imagePath = 'https://a1ads.site/'.$row['image'];
                                 echo '<p class="card-text">' . '<img src="' . $imagePath . '" alt="Image" width="70" height="70">' . '</p>';
                                     }
     
@@ -228,12 +229,10 @@ $(document).ready(function () {
                 if (data.registered) {
                     if (data.verified === '1') {
                         if (data.plan === 'A1U') {
-                            // Both conditions met, open modal
-                            alert('User verified');
                             openAddQueryModal();
                         } else {
                             // Plan is not A1U, show plan-related error message
-                            alert('You are not a valid user');
+                            alert('Join Whatsapp status job');
                             $('#newJoinerMobile').val(mobileNumber);
                             $('#newJoinerMobile').prop('disabled', true);
                         }
