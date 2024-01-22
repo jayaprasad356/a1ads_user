@@ -154,7 +154,7 @@ if (isset($_POST['btnAdd'])) {
                             // Define status labels based on the status values.
                             $statusLabels = array(
                                 '0' => '<span class="text-primary">Processing</span>',
-                                '1' => '<span class="text-success">Fixed</span>',
+                                '1' => '<span class="text-success">Approved</span>',
                                 '2' => '<span class="text-danger">Rejected</span>',
                             );
                         
