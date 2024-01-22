@@ -56,11 +56,18 @@ if (isset($_GET['mobile'])) {
 if (isset($_POST['btnAdd'])) {
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     $no_of_views = isset($_POST['no_of_views']) ? $db->escapeString($_POST['no_of_views']) : null;
-                    $currentDate = date('Y-m-d');
 
-    $sql_check = "SELECT image, datetime FROM whatsapp WHERE user_id = '$user_id'";
-    $db->sql($sql_check);
-    $res_check = $db->getResult();
+    // Check if the current time is between 9 AM and 6 PM
+    $current_hour = date('H');
+    if ($current_hour < 9 || $current_hour >= 18) {
+        echo '<p class="alert alert-warning">Image upload is allowed only between 9 AM and 6 PM.</p>';
+        exit();
+    }
+
+    // Check if the user has already uploaded an image for the current day
+    $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = CURDATE()";
+    $db->sql($sql_date_check);
+    $res_date_check = $db->getResult();
 
     if ($res_date_check[0]['count'] > 0) {
         echo '<p class="alert alert-warning">Screenshot already uploaded.</p>';
@@ -80,20 +87,16 @@ if (isset($_POST['btnAdd'])) {
                     $upload_image = 'upload/images/' . $filename;
                     $current_datetime = date('Y-m-d H:i:s');
 
-                $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = CURDATE()";
-                $db->sql($sql_date_check);
-                $res_date_check = $db->getResult();
-
-                if ($res_date_check[0]['count'] > 0) {
-                    echo '<p class="alert alert-warning">Screenshot already uploaded </p>';
-                } else {
+                    // Insert the image details into the database
                     $sql = "INSERT INTO whatsapp (image, user_id, no_of_views, datetime)
                             VALUES ('$upload_image', '$user_id', '$no_of_views', '$current_datetime')";
                     $db->sql($sql);
 
-                    $_SESSION['form_success'] = true; 
+                    $_SESSION['form_success'] = true;
                     header("Location: whatsapp.php");
                     exit();
+                } else {
+                    echo '<p class="alert alert-danger">Failed to move the uploaded image.</p>';
                 }
             } else {
                 echo '<p class="alert alert-danger">Invalid image format or size.</p>';
