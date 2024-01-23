@@ -239,7 +239,7 @@ $(document).ready(function () {
                             }
 
                         }else{
-                            alert('You are daily income plan');
+                            alert('You are in daily income plan');
 
                         }
 
