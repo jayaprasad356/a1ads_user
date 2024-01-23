@@ -221,14 +221,21 @@ $(document).ready(function () {
             success: function (data) {
                 if (data.registered) {
                     if (data.verified === '1') {
-                        if (data.plan === 'A1U') {
-                            openAddQueryModal();
-                        } else {
-                            // Plan is not A1U, show plan-related error message
-                            alert('Join Whatsapp status job');
-                            $('#newJoinerMobile').val(mobileNumber);
-                            $('#newJoinerMobile').prop('disabled', true);
+                        if (data.whatsapp_status === '0') {
+                            if (data.plan === 'A1U') {
+                                openAddQueryModal();
+                            } else {
+                                // Plan is not A1U, show plan-related error message
+                                alert('Join Whatsapp status job');
+                                $('#newJoinerMobile').val(mobileNumber);
+                                $('#newJoinerMobile').prop('disabled', true);
+                            }
+
+                        }else{
+                            alert('You are daily income plan');
+
                         }
+
                     } else {
                         // Status is not 1, show status-related error message
                         alert('User Not-verified');
