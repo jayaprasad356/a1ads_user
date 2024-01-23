@@ -228,7 +228,7 @@ $(document).ready(function () {
             success: function (data) {
                 if (data.registered) {
                     if (data.verified === '1') {
-                        if (data.whatsapp_status === '0') {
+                        if (data.whatsapp_status === '1') {
                             if (data.plan === 'A1U') {
                                 openAddQueryModal();
                             } else {
