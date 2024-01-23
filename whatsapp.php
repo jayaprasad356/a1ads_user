@@ -56,13 +56,23 @@ if (isset($_GET['mobile'])) {
 if (isset($_POST['btnAdd'])) {
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     $no_of_views = isset($_POST['no_of_views']) ? $db->escapeString($_POST['no_of_views']) : null;
-                    $currentDate = date('Y-m-d');
 
-    $sql_check = "SELECT image, datetime FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = '$currentDate'";
-    $db->sql($sql_check);
-    $res_check = $db->getResult();
+    // Check if the current time is between 9 AM and 6 PM
+    $current_hour = date('H');
+    if ($current_hour < 9 || $current_hour >= 18) {
+        echo '<p class="alert alert-warning">Image upload is allowed only between 9 AM and 6 PM.</p>';
+        exit();
+    }
 
-    if (empty($res_check[0]['image'])) {
+    // Check if the user has already uploaded an image for the current day
+    $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = CURDATE()";
+    $db->sql($sql_date_check);
+    $res_date_check = $db->getResult();
+
+    if ($res_date_check[0]['count'] > 0) {
+        echo '<p class="alert alert-warning">Screenshot already uploaded.</p>';
+    } else {
+        // Check if an image file is uploaded
         if ($_FILES['image']['size'] != 0 && $_FILES['image']['error'] == 0 && !empty($_FILES['image'])) {
             $result = $fn->validate_image($_FILES["image"]);
 
@@ -70,35 +80,32 @@ if (isset($_POST['btnAdd'])) {
                 $extension = pathinfo($_FILES["image"]["name"])['extension'];
                 $target_path = 'upload/images';
                 $filename = microtime(true) . '.' . strtolower($extension);
-                $full_path = $target_path . "" . $filename;
+                $full_path = $target_path . "/" . $filename;
 
-                if (!move_uploaded_file($_FILES["image"]["tmp_name"], $full_path)) {
-                    echo '<p class="alert alert-danger">Can not upload image.</p>';
-                    return false;
+                // Move the uploaded image to the target path
+                if (move_uploaded_file($_FILES["image"]["tmp_name"], $full_path)) {
+                    $upload_image = 'upload/images/' . $filename;
+                    $current_datetime = date('Y-m-d H:i:s');
+
+                    // Insert the image details into the database
+                    $sql = "INSERT INTO whatsapp (image, user_id, no_of_views, datetime)
+                            VALUES ('$upload_image', '$user_id', '$no_of_views', '$current_datetime')";
+                    $db->sql($sql);
+
+                    $_SESSION['form_success'] = true;
+                    header("Location: whatsapp.php");
+                    exit();
+                } else {
+                    echo '<p class="alert alert-danger">Failed to move the uploaded image.</p>';
                 }
-
-                $upload_image = 'upload/images' . $filename;
-                $current_datetime = date('Y-m-d H:i:s');
-
-
-                $sql = "INSERT INTO whatsapp (image, user_id, no_of_views, datetime)
-                        VALUES ('$upload_image', '$user_id', '$no_of_views', '$current_datetime')";
-                $db->sql($sql);
-
-                $_SESSION['form_success'] = true; 
-                header("Location: whatsapp.php");
-                exit();
             } else {
-                echo '<p class="alert alert-danger">Query insertion failed.</p>';
+                echo '<p class="alert alert-danger">Invalid image format or size.</p>';
             }
         } else {
-            echo '<p class="alert alert-danger">Cannot upload image.</p>';
+            echo '<p class="alert alert-danger">No image uploaded.</p>';
         }
-    } else {
-        echo '<p class="alert alert-warning">Screenshot already uploaded.</p>';
     }
 }
-
 ?>
 
 <!-- The rest of your HTML code -->
