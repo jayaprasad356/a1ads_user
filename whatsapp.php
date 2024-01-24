@@ -58,7 +58,7 @@ if (isset($_POST['btnAdd'])) {
     $no_of_views = isset($_POST['no_of_views']) ? $db->escapeString($_POST['no_of_views']) : null;
                     $currentDate = date('Y-m-d');
 
-    $sql_check = "SELECT image, datetime FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = '$currentDate'";
+    $sql_check = "SELECT image, datetime FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = '$currentDate' AND status != 2";
     $db->sql($sql_check);
     $res_check = $db->getResult();
 
