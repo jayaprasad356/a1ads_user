@@ -23,7 +23,7 @@ if (isset($_GET['mobile'])) {
             $_SESSION['user_id'] = $userData[0]['id'];
         }
 
-        $response = array('registered' => true, 'verified' => $result[0]['status'], 'plan' => $result[0]['plan'], 'whatsapp_status' => $result[0]['whatsapp_status']);
+        $response = array('registered' => true, 'verified' => $result[0]['status'], 'plan' => $result[0]['plan']);
 
         if ($result[0]['status'] == 0) {
             $update_query = "UPDATE users SET payment_verified = 'request' WHERE mobile = '$mobile'";
