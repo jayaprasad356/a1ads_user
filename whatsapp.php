@@ -239,7 +239,7 @@ $(document).ready(function () {
                             }
 
                         }else{
-                            alert('You are in daily income plan');
+                            alert('Portal Open in 10:00 AM );
 
                         }
 
