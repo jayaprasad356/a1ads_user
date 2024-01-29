@@ -106,6 +106,18 @@ if (isset($_POST['btnAdd'])) {
         }
     }
 }
+$sql_query = "SELECT image FROM whatsapp ORDER BY RAND() LIMIT 1";
+$db->sql($sql_query);
+$imageData = $db->getResult();
+
+// Check if there is any image data retrieved
+if (!empty($imageData)) {
+    // Get the image URL
+    $imageUrl = 'https://a1ads.site/' . $imageData[0]['image']; // Assuming image URL is retrieved properly
+} else {
+    // If no image URL is retrieved, set it to empty
+    $imageUrl = '';
+}
 ?>
 
 <!-- The rest of your HTML code -->
@@ -118,13 +130,34 @@ if (isset($_POST['btnAdd'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
 </head>
+<style>
+    .container {
+        position: relative;
+    }
+
+    #shareButton {
+        position: absolute;
+        top: -10px !important;
+        right: 300px !important;    
+    }
+
+    @media (max-width: 768px) {
+        #shareButton {
+            right: 10px !important; 
+        }
+        
+    }
+</style>
+
 <body>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form class="form-inline" method="GET">
                 <div class="form-group mb-3">
-                    <label for="mobile" class="form-label">Mobile Number</label>
+                <label for="mobile" class="form-label">Mobile Number</label>
+                <button type="button" class="btn btn-danger" id="shareButton">Share</button>
+                    
                     <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter your mobile number" required>
                     <!-- Custom validation message -->
                     <div class="invalid-feedback" id="mobileValidationMessage">Mobile number is required.</div>
@@ -337,9 +370,41 @@ $(document).ready(function () {
         }
     }
 </script>
+<script>
+document.getElementById('shareButton').addEventListener('click', function() {
+    // Check if Web Share API is supported
+    if (navigator.share) {
+        // Use Web Share API to share URL
+        navigator.share({
+            title: 'Title of the shared content',
+            text: 'Description of the shared content',
+            url: '<?php echo $imageUrl; ?>'
+        }).then(() => {
+            console.log('Shared successfully');
+        }).catch((error) => {
+            console.error('Error sharing:', error);
+        });
+    } else {
+        // Fallback: Provide options to share via WhatsApp or other platforms
+        var shareUrl = '<?php echo $imageUrl; ?>';
+        
+        if (shareUrl) {
+            // If image URL is not empty, create HTML link for the image
+            var imageHTML = "<a data-lightbox='category' href='" + shareUrl + "' data-caption='" + shareUrl + "'><img src='" + shareUrl + "' title='" + shareUrl + "' height='50' /></a>";
+        } else {
+            // If image URL is empty, display 'No Image'
+            var imageHTML = 'No Image';
+        }
 
-
-
+        // For WhatsApp sharing, you can construct a URL with the content to share
+        var whatsappUrl = 'whatsapp://send?text=' + encodeURIComponent(shareUrl);
+        // Open WhatsApp sharing in a new window/tab
+        window.open(whatsappUrl, '_blank');
+        
+        // You can add more sharing options here for other platforms if needed
+    }
+});
+</script>
 
 </body>
 </html>
