@@ -10,6 +10,8 @@ include_once('includes/custom-functions.php');
 include_once('includes/functions.php');
 $res = [];
 $user_id = NULL;
+$imageUrl = ''; // Initialize the image URL variable
+
 
 $fn = new Functions(); // Instantiate the Functions class
 
@@ -106,18 +108,32 @@ if (isset($_POST['btnAdd'])) {
         }
     }
 }
-$sql_query = "SELECT image FROM whatsapp ORDER BY RAND() LIMIT 1";
-$db->sql($sql_query);
-$imageData = $db->getResult();
+function getImageUrlFromDatabase() {
+    global $db;
+    $sql_query = "SELECT image FROM whatsapp ORDER BY RAND() LIMIT 1";
+    $db->sql($sql_query);
+    $image = $db->getResult();
 
-// Check if there is any image data retrieved
-if (!empty($imageData)) {
-    // Get the image URL
-    $imageUrl = 'https://a1ads.site/' . $imageData[0]['image']; // Assuming image URL is retrieved properly
-} else {
-    // If no image URL is retrieved, set it to empty
-    $imageUrl = '';
-}
+
+        if (!empty($row['image'])) {
+            $tempRow['image'] = "<a data-lightbox='category' href='" . $row['image'] . "' data-caption='" . $row['image'] . "'><img src='" . $row['image'] . "' title='" . $row['image'] . "' height='50' /></a>";
+        } else {
+            $tempRow['image'] = 'No Image';
+        }
+
+        // Check if the image file exists
+        if (file_exists($imagePath)) {
+            // If the file exists, construct the WhatsApp sharing URL
+            $whatsappShareUrl = 'whatsapp://send?text=Check out this image: ' . rawurlencode($imagePath);
+
+            // Open WhatsApp sharing in a new window/tab
+            echo "<script>window.open('$whatsappShareUrl', '_blank');</script>";
+        } else {
+            echo "Image file not found at: $imagePath";
+        }
+    }
+
+
 ?>
 
 <!-- The rest of your HTML code -->
@@ -262,8 +278,8 @@ $(document).ready(function () {
                 if (data.registered) {
                     if (data.verified === '1') {
                         if (data.plan === 'A1U') {
-                            if (data.whatsapp_status === '1') {
-                                openAddQueryModal();
+                            if (data.whatsapp_status == '1') {
+                                    openAddQueryModal();
                             } else {
                                 // WhatsApp status is not 1, show error message
                                 alert('You are not joined in Whatsapp status job');
@@ -276,7 +292,9 @@ $(document).ready(function () {
                             $('#newJoinerMobile').val(mobileNumber);
                             $('#newJoinerMobile').prop('disabled', true);
                         }
-                    } else {
+                     } else if (data.verified === '0' && data.free_income === '1') {
+                            openAddQueryModal();
+                        } else {
                         // Status is not 1, show status-related error message
                         alert('User Not-verified');
                         $('#newJoinerMobile').val(mobileNumber);
@@ -371,40 +389,16 @@ $(document).ready(function () {
     }
 </script>
 <script>
-document.getElementById('shareButton').addEventListener('click', function() {
-    // Check if Web Share API is supported
-    if (navigator.share) {
-        // Use Web Share API to share URL
-        navigator.share({
-            title: 'Title of the shared content',
-            text: 'Description of the shared content',
-            url: '<?php echo $imageUrl; ?>'
-        }).then(() => {
-            console.log('Shared successfully');
-        }).catch((error) => {
-            console.error('Error sharing:', error);
+        document.getElementById('shareButton').addEventListener('click', function() {
+            var tempImagePath = '<?php echo $tempImagePath; ?>';
+            if (tempImagePath) {
+                // Open WhatsApp sharing in a new window/tab with the temporary image file
+                window.open('whatsapp://send?text=' + encodeURIComponent(tempImagePath), '_blank');
+            } else {
+                console.error('No temporary image file available.');
+            }
         });
-    } else {
-        // Fallback: Provide options to share via WhatsApp or other platforms
-        var shareUrl = '<?php echo $imageUrl; ?>';
-        
-        if (shareUrl) {
-            // If image URL is not empty, create HTML link for the image
-            var imageHTML = "<a data-lightbox='category' href='" + shareUrl + "' data-caption='" + shareUrl + "'><img src='" + shareUrl + "' title='" + shareUrl + "' height='50' /></a>";
-        } else {
-            // If image URL is empty, display 'No Image'
-            var imageHTML = 'No Image';
-        }
-
-        // For WhatsApp sharing, you can construct a URL with the content to share
-        var whatsappUrl = 'whatsapp://send?text=' + encodeURIComponent(shareUrl);
-        // Open WhatsApp sharing in a new window/tab
-        window.open(whatsappUrl, '_blank');
-        
-        // You can add more sharing options here for other platforms if needed
-    }
-});
-</script>
+    </script>
 
 </body>
 </html>
