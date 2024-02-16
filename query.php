@@ -43,7 +43,7 @@ if (isset($_POST['btnAdd'])) {
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
     if ($user_id !== null) {
-        if (isRequestAllowed()) {
+        if (!isRequestAllowed()) {
             $checkstatus = null;
             $sql_query = "SELECT status FROM query WHERE user_id = '$user_id' AND status = '0'";
             $db->sql($sql_query);
