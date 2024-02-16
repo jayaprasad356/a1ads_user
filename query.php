@@ -43,7 +43,7 @@ if (isset($_POST['btnAdd'])) {
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
     if ($user_id !== null) {
-        // if (!isRequestAllowed()) {
+        if (isRequestAllowed()) {
             $checkstatus = null;
             $sql_query = "SELECT status FROM query WHERE user_id = '$user_id' AND status = '0'";
             $db->sql($sql_query);
@@ -59,10 +59,9 @@ if (isset($_POST['btnAdd'])) {
                 $db->sql($sql_query);
                 $insertedData = $db->getResult();
             }
-        // } 
-        // else {
-        //     echo "<script>alert('Requests Query Timing between 9 AM and 6 PM.');</script>";
-        // }
+        } else {
+            echo "<script>alert('Requests Query Timing between 9 AM and 6 PM.');</script>";
+        }
     } else {
         $errorMessage = 'User not found. Query insertion failed.';
     }
