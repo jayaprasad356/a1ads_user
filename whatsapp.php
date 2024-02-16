@@ -11,6 +11,7 @@ include_once('includes/functions.php');
 $res = [];
 $user_id = NULL;
 $imageUrl = ''; // Initialize the image URL variable
+$currentdate = date('Y-m-d');
 
 
 $fn = new Functions(); // Instantiate the Functions class
@@ -67,7 +68,7 @@ if (isset($_POST['btnAdd'])) {
     // }
 
     // Check if the user has already uploaded an image for the current day
-    $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = CURDATE()";
+    $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = '$currentdate' AND status = 1";
     $db->sql($sql_date_check);
     $res_date_check = $db->getResult();
 
