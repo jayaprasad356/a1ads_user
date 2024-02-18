@@ -62,10 +62,10 @@ if (isset($_POST['btnAdd'])) {
 
     // Check if the current time is between 9 AM and 6 PM
     $current_hour = date('H');
-    if ($current_hour < 9 || $current_hour >= 18) {
-        echo '<p class="alert alert-warning">Image upload is allowed only between 9 AM and 6 PM.</p>';
-        exit();
-    }
+    // if ($current_hour < 9 || $current_hour >= 18) {
+    //     echo '<p class="alert alert-warning">Image upload is allowed only between 9 AM and 6 PM.</p>';
+    //     exit();
+    // }
 
     // Check if the user has already uploaded an image for the current day
     $sql_date_check = "SELECT COUNT(*) AS count FROM whatsapp WHERE user_id = '$user_id' AND DATE(datetime) = '$currentdate' AND status = 1";
