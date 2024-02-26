@@ -18,7 +18,7 @@ $fn = new Functions(); // Instantiate the Functions class
 
 function isRequestAllowed() {
     $currentTime = strtotime(date('H:i:s'));
-    $startTime = strtotime('09:00:00');
+    $startTime = strtotime('10:00:00');
     $endTime = strtotime('18:00:00');
 
     return ($currentTime >= $startTime && $currentTime <= $endTime);
