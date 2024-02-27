@@ -47,10 +47,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <br>
             <br>
-            <div class="row">
+            <!-- <div class="row">
             <a href="query.php" class="btn btn-primary">I have Queries to ask</a>
             </div>
-            
+             -->
             
         </div>
     </div>
